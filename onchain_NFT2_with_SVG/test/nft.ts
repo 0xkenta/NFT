@@ -101,7 +101,6 @@ describe("NFT.sol", () => {
             expect(name).to.be.equal("NFT 1")
             expect(description).to.be.equal("Test NFT only background and message in the center of image")
             expect(image).to.not.be.undefined
-            // image base64 todo
         })
     })
 })
