@@ -37,10 +37,10 @@ describe("NFT.sol", () => {
     })
 
     describe("mint()", () => {
-        it("revert if color is invalid", async () => {
-            await expect(nftContract.mint(message, "yellow"))
-                .to.be.revertedWith("COLOR_IS_NOT_VALID")
-        })
+        // it("revert if color is invalid", async () => {
+        //     await expect(nftContract.mint(message, "yellow"))
+        //         .to.be.revertedWith("COLOR_IS_NOT_VALID")
+        // })
         it("revert if words exceed length limit", async () => {
             await expect(nftContract.mint("TOO MANY WORDS ARE GIVEN", color))
                 .to.be.revertedWith("message is to long")

@@ -2,7 +2,7 @@ pragma solidity 0.8.9;
 
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "./Base64.sol";
+import { Base64 } from 'base64-sol/base64.sol';
 
 
 contract NFT is ERC721Enumerable, Ownable {
@@ -21,12 +21,6 @@ contract NFT is ERC721Enumerable, Ownable {
     constructor() ERC721("NEW TEST NFT", "TEST2") {}
 
     function mint(string calldata _message, string calldata _color) external {
-        require(
-            keccak256(abi.encodePacked(_color)) == keccak256(abi.encodePacked("red"))
-            || keccak256(abi.encodePacked(_color)) == keccak256(abi.encodePacked("green"))
-            || keccak256(abi.encodePacked(_color)) == keccak256(abi.encodePacked("blue")),
-            "COLOR_IS_NOT_VALID"
-        );
         bytes memory messageBytes = bytes(_message);
         require(messageBytes.length <= messageLimit, "message is to long");
         uint256 newTokenID = totalSupply() + 1;
@@ -48,7 +42,7 @@ contract NFT is ERC721Enumerable, Ownable {
         return buildMetadata(_tokenId);
     }
 
-    function buildMetadata(uint256 _tokenId) private view returns (string memory) {
+    function buildMetadata(uint256 _tokenId) internal view returns (string memory) {
         Word memory _word = wordsToTokenId[_tokenId];
         string memory image = buildImage(_word.message, _word.color);
         return string(
@@ -68,7 +62,7 @@ contract NFT is ERC721Enumerable, Ownable {
             Base64.encode(
                 bytes(
                     abi.encodePacked(
-                        '<svg width="100" height="100">',
+                        '<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg">',
                         '<circle cx="50" cy="50" r="40" fill="',
                         _color,
                         '"',
