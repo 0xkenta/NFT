@@ -14,7 +14,7 @@ describe("NFT.sol", () => {
     let user2Address: string
     let nftContract: NFT
 
-    const message = "HELLO WORLD"
+    const message = "HELLO"
     const color = "red"
 
     const emptyAddress = constants.AddressZero
@@ -37,10 +37,10 @@ describe("NFT.sol", () => {
     })
 
     describe("mint()", () => {
-        // it("revert if color is invalid", async () => {
-        //     await expect(nftContract.mint("yellow", message))
-        //         .to.be.revertedWith("COLOR_IS_NOT_VALID")
-        // })
+        it("revert if color is invalid", async () => {
+            await expect(nftContract.mint("yellow", message))
+                .to.be.revertedWith("InvalidColor()")
+        })
         it("revert if words exceed length limit", async () => {
             await expect(nftContract.mint(color, "TOO MANY WORDS ARE GIVEN"))
                 .to.be.revertedWith("TooLongMessage()")
@@ -101,6 +101,7 @@ describe("NFT.sol", () => {
             expect(name).to.be.equal("NFT 1")
             expect(description).to.be.equal("Test NFT only background and message in the center of image")
             expect(image).to.not.be.undefined
+            console.log(image)
         })
     })
 })
