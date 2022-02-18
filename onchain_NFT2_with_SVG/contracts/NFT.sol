@@ -6,6 +6,7 @@ import { Base64 } from 'base64-sol/base64.sol';
 
 error NoNFT();
 error TooLongMessage();
+error InvalidColor();
 
 contract NFT is ERC721Enumerable, Ownable {
     using Strings for uint256;
@@ -18,11 +19,15 @@ contract NFT is ERC721Enumerable, Ownable {
     }
 
     mapping (uint256 => ItemInfo) public itemInfoToTokenId;
-    uint8 public messageLimit = 15;
+    uint8 public messageLimit = 8;
 
     constructor() ERC721("TEST NFT", "TEST") {}
 
     function mint(string calldata _color, string calldata _message) public {
+        bytes32 color = bytes32(bytes(_color));
+        if (color != bytes32("red") && color != bytes32("green"))
+            revert InvalidColor();
+
         bytes memory messageBytes = bytes(_message);
         if (messageBytes.length > messageLimit) revert TooLongMessage();
 
@@ -73,9 +78,7 @@ contract NFT is ERC721Enumerable, Ownable {
             bytes(
                 abi.encodePacked(
                     '<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg">',
-                    '<circle cx="50" cy="50" r="40" fill=',
-                    _color,
-                    ' />',
+                    '<circle cx="50" cy="50" r="40" fill="',_color,'" />',
                     '<text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="white">',
                     _message,
                     '</text>',
