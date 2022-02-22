@@ -14,7 +14,7 @@ contract TestNFT is ERC721 {
 
     struct Result {
         uint256 score;
-        uint256 lastEmited;
+        uint256 lastEmitted;
         uint256 updatedCount;
     }
 
@@ -45,7 +45,7 @@ contract TestNFT is ERC721 {
 
     function requestRandomness(uint256 _tokenId) internal {
         Result storage result = results[_tokenId];
-        if (result.updatedCount != 0 && block.timestamp < result.lastEmited + 1 days)
+        if (result.updatedCount != 0 && block.timestamp < result.lastEmitted + 1 days)
             revert UpdateNotAvailable();
 
         uint256 score = uint256(keccak256(abi.encodePacked(block.timestamp, block.difficulty, msg.sender))) % 5 + 1;
@@ -53,7 +53,7 @@ contract TestNFT is ERC721 {
         uint updatedCount = result.updatedCount + 1;
 
         result.score = score;
-        result.lastEmited = lastUpdated;
+        result.lastEmitted = lastUpdated;
         result.updatedCount = updatedCount;
 
         emit ResultUpdated(msg.sender, score, lastUpdated, updatedCount);
