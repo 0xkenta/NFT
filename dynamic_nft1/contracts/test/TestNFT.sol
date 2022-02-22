@@ -10,9 +10,6 @@ error UpdateNotAvailable();
 contract TestNFT is ERC721 {
     using Strings for uint256;
 
-    bytes32 internal constant keyHash = 0x6e75b569a01ef56d18cab6a8e71e6600d6ce853834d4a5748b720d06f878b3a4;
-    uint256 internal constant fee = 0.1 * 10 ** 18;
-
     uint256 public tokenCounter = 1;
 
     struct Result {
