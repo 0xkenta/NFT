@@ -1,4 +1,4 @@
-import { ethers } from "hardhat";
+import { ethers, network } from "hardhat";
 import { expect, use } from 'chai';
 import { solidity } from 'ethereum-waffle';
 import { TestNFT } from '../typechain-types'
@@ -58,16 +58,18 @@ describe("NFT.sol", () => {
         })
     })
     describe("updateOmikuji()", async () => {
-        //todo manipulation block.timestamp
-        // it("revert if it does not take 1 day after last emitting", async () => {
-
-        // })
-        // it("increase uopdatedCount", async () => {
-        //     await dNFT.emitOmikuji()
-        //     const updatedCountBefore = (await dNFT.results(1)).updatedCount
-        //     await dNFT.updateOmikuji(1)
-        //     const updatedCountAfter = (await dNFT.results(1)).updatedCount
-        //     expect(updatedCountBefore.toNumber() + 1).to.be.equal(updatedCountAfter.toNumber())
-        // })
+        it("revert if it does not take 1 day after last emitting", async () => {
+            await dNFT.emitOmikuji()
+            await expect(dNFT.updateOmikuji(1)).to.be.revertedWith("UpdateNotAvailable()")
+        })
+        it("increase uopdatedCount", async () => {
+            await dNFT.emitOmikuji()
+            const updatedCountBefore = (await dNFT.results(1)).updatedCount
+            const blockTimestamp = (await ethers.provider.getBlock("latest")).timestamp
+            await network.provider.send("evm_setNextBlockTimestamp", [blockTimestamp + 86400])
+            await dNFT.updateOmikuji(1)
+            const updatedCountAfter = (await dNFT.results(1)).updatedCount
+            expect(updatedCountBefore.toNumber() + 1).to.be.equal(updatedCountAfter.toNumber())
+        })
     })
 })
