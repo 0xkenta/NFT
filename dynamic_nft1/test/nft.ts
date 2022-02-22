@@ -9,14 +9,12 @@ use(solidity)
 describe("NFT.sol", () => {
     let deployer: Signer
     let user1: Signer
-    let user2: Signer
-    let user1Address: string
-    let user2Address: string
     let dNFT: TestNFT
 
     const emptyAddress = constants.AddressZero
 
     beforeEach(async () => {
+        [deployer, user1] = await ethers.getSigners()
         dNFT = await (await ethers.getContractFactory("TestNFT")).deploy() as TestNFT
     })
 
@@ -57,7 +55,11 @@ describe("NFT.sol", () => {
             }    
         })
     })
-    describe("updateOmikuji()", async () => {
+    describe("updateOmikuji()", () => {
+        it("revert if msg.sender is not owner of Token", async () => {
+            await dNFT.emitOmikuji()
+            // await expect(dNFT.connect(user1).updateOmikuji(1)).to.be.revertedWith("NoAuth()")
+        })
         it("revert if it does not take 1 day after last emitting", async () => {
             await dNFT.emitOmikuji()
             await expect(dNFT.updateOmikuji(1)).to.be.revertedWith("UpdateNotAvailable()")
@@ -65,11 +67,25 @@ describe("NFT.sol", () => {
         it("increase uopdatedCount", async () => {
             await dNFT.emitOmikuji()
             const updatedCountBefore = (await dNFT.results(1)).updatedCount
+
             const blockTimestamp = (await ethers.provider.getBlock("latest")).timestamp
             await network.provider.send("evm_setNextBlockTimestamp", [blockTimestamp + 86400])
+
             await dNFT.updateOmikuji(1)
             const updatedCountAfter = (await dNFT.results(1)).updatedCount
             expect(updatedCountBefore.toNumber() + 1).to.be.equal(updatedCountAfter.toNumber())
+        })
+        it("update lastEmit", async () => {
+            await dNFT.emitOmikuji()
+            const lastEmittedBefore = (await dNFT.results(1)).lastEmitted
+
+            const blockTimestamp = (await ethers.provider.getBlock("latest")).timestamp
+            const day = 86400
+            await network.provider.send("evm_setNextBlockTimestamp", [blockTimestamp + day])
+
+            await dNFT.updateOmikuji(1)
+            const lastEmittedAfter = (await dNFT.results(1)).lastEmitted
+            expect(lastEmittedBefore.toNumber() + day).to.be.equal(lastEmittedAfter.toNumber())
         })
     })
 })
