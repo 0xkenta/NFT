@@ -13,21 +13,16 @@
   solidity: "0.8.10",
   defaultNetwork: "hardhat",
   networks: {
-    hardhat: {
-      forking: {
-        url: API_URL
-      }
+    polygon_mumbai: {
+      url: API_URL,
+      accounts: [`0x${PRIVATE_KEY}`],
+      gas: 2100000,
+      gasPrice: 8000000000
+    },
   },
-  polygon_mumbai: {
-    url: API_URL,
-    accounts: [`0x${PRIVATE_KEY}`],
-    gas: 2100000,
-    gasPrice: 8000000000
+  etherscan: {
+    apiKey: {
+      polygonMumbai: POLYGON_ETHERSCAN_API
+    }
   }
-  },
-   etherscan: {
-     apiKey: {
-       polygonMumbai: POLYGON_ETHERSCAN_API
-     }
-   }
  }
